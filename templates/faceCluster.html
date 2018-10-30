@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>数据标注主页</title>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/tagpage.css' %}" rel="stylesheet">
+</head>
+<body>
+<!--导航条开始-->
+{% include "nav.html" %}
+<!--导航条结束-->
+<!--二级导航条开始-->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <a class="s s1">Home</a>
+        <a class="s s2">数据标注主页</a>
+        <a class="s s3">上一级</a>
+    </div>
+    <div class="panel-body" style="padding: 0">
+        <!--内容开始-->
+        {% csrf_token %}
+        <div class="container-fluid">
+            <div class="row">
+                <!--<div class="col-md-2" style="padding: 0">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h5>属性栏</h5>
+                        </div>
+                        <div class="panel-body" style="height: 400px">
+                            <p>
+                                <button class="btn btn-success">normal</button>
+                            </p>
+                            <p>
+                                <button class="btn btn-danger">lying</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>-->
+                <div class="col-md-12" style="padding: 0">
+                    <div class="panel panel-success">
+                        {#                        <div class="panel-heading">#}
+                        {#                            <h5><span class="current_id">图片ID=/media/36</span>#}
+                        {#                            </h5>#}
+                        {#                            <span class="obj_id" style="display: none">36</span>#}
+                        {#                        </div>#}
+                        <div class="panel-body" style="height: 550px">
+                            {% for image in images %}
+                                {#                            <img style="height: 200px" src="/media/images/20180719_IMG_1229.JPG"#}
+                                <img style="height: 200px" src="/media/{{ image.image_url }}"
+                                     alt="图片名称">
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="view">
+                    <button type="button" class="btn btn-warning">全选</button>
+                    <button type="button" class="btn btn-default">跳转</button>
+                    <button type="button" class="btn btn-primary prev">上一页</button>
+                    <button type="button" class="btn btn-success next">下一页</button>
+                </div>
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if page_num.has_previous %}
+                            <a href="?page={{ page_num.previous_page_number }}">previous</a>
+                        {% endif %}
+
+                        <span class="current">
+                            Page {{ page_num.number }} of {{ page_num.paginator.num_pages }}.
+                        </span>
+
+                        {% if page_num.has_next %}
+                            <a href="?page={{ page_num.next_page_number }}">next</a>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            {#            <hr>#}
+            {#            <div class="panel panel-default" style="padding: 0">#}
+            {#                <div class="panel-heading">#}
+            {#                    <h5><span>评论列表</span>#}
+            {#                    </h5>#}
+            {#                </div>#}
+            {#                <div class="panel-body">#}
+            {##}
+            {#                </div>#}
+            {#            </div>#}
+        </div>
+
+        <!--内容结束-->
+    </div>
+</div>
+<!--二级导航条结束-->
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="{% static 'plugins/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.js' %}"></script>
+<script>
+    $(".next").click(function () {
+        $.ajax({
+            url: "/tagPage/",
+            type: "post",
+            dataType: "json",
+            data: {
+                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                "id": $(".obj_id").text(),
+                {#"statuc": "next",#}
+            },
+            success: function (res) {
+                console.log(res);
+                if (res.code == 1) {
+                    $("img").attr("src", "/media/" + res.data.image_url);
+                    $(".obj_id").text(res.data.id);
+                    $(".current_id").text("图片ID=/media/" + res.data.id)
+                }
+                else {
+                    $(".next").attr({disabled: "disabled"});
+                }
+            }
+        })
+    })
+    $(".prev").click(function () {
+        $.ajax({
+            url: "/tagPage/",
+            type: "post",
+            data: {
+                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                "id1": $(".obj_id").text(),
+            },
+            success: function (res) {
+                console.log(res);
+                if (res.code == 1) {
+                    $("img").attr("src", "/media/" + res.data.image_url);
+                    $(".obj_id").text(res.data.id);
+                    $(".current_id").text("图片ID=/media/" + res.data.id)
+                }
+                else {
+                    $(".prev").attr({disabled: "disabled"});
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>

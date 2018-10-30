@@ -1,0 +1,465 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>数据标注主页</title>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/tagpage.css' %}" rel="stylesheet">
+    <link href="{% static 'css/tui-image-editor.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'css/tui-color-picker.css' %}" rel="stylesheet">
+    <style>
+        #box {
+            width: 454px;
+            height: 605px;
+            border: 1px solid black;
+            margin: 20px auto;
+            position: relative;
+            backdrop-filter: opacity(80
+            );
+        }
+
+        #box div {
+            border: 2px solid red;
+            position: absolute;
+        }
+
+        #box div {
+            filter: alpha(Opacity=80);
+            -moz-opacity: 0.5;
+            opacity: 0.5;
+        }
+
+        .image {
+            width: 454px;
+            height: 605px;
+        }
+    </style>
+
+</head>
+<body>
+<!--导航条开始-->
+{% include "nav.html" %}
+<!--导航条结束-->
+<!--二级导航条开始-->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <a class="s s1">Home</a>
+        <a class="s s2">数据标注主页</a>
+        <a class="s s3">上一级</a>
+    </div>
+    <div class="panel-body" style="padding: 0">
+        <!--内容开始-->
+        {% csrf_token %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-2" style="padding: 0;width: 250px">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h5>属性栏</h5>
+                        </div>
+                        <div class="panel-body" style="height: 400px">
+                            <p>
+                                <button class="btn btn-success normal">normal</button>
+                            </p>
+                            <p>
+                                <button class="btn btn-danger lying">lying</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10" style="padding: 0;">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h5><span class="current_id">图片ID=/media/36</span>
+                            </h5>
+                            <span class="obj_id" style="display: none">36</span>
+                        </div>
+
+
+                        <div class="panel-body" style="height: 800px;">
+
+                            {#                            <img class="image" src="/media/images/20180719_IMG_1229.JPG" alt="">#}
+
+                            <div id="tui-image-editor-container">
+                            </div>
+                            <br>
+                            <div class="view">
+                                {#                                <button type="button" class="btn btn-warning">收藏</button>#}
+                                <button type="button" class="btn btn-default save">保存</button>
+                                <button type="button" class="btn btn-primary prev">上一张</button>
+                                <button type="button" class="btn btn-success next">下一张</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                {#                <div class="view">#}
+                {#                    <button type="button" class="btn btn-warning">收藏</button>#}
+                {#                    <button type="button" class="btn btn-default">撤销</button>#}
+                {#                    <button type="button" class="btn btn-primary prev">上一张</button>#}
+                {#                    <button type="button" class="btn btn-success next">下一张</button>#}
+                {#                </div>#}
+            </div>
+            <hr>
+            <div class="panel panel-default" style="padding: 0">
+                <div class="panel-heading">
+                    <h5><span>评论列表</span>
+                    </h5>
+                </div>
+                <div class="panel-body">
+                    <textarea></textarea>>
+                </div>
+            </div>
+        </div>
+
+        <!--内容结束-->
+    </div>
+</div>
+<!--二级导航条结束-->
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="{% static 'plugins/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'plugins/fabric.js' %}"></script>
+<script type="text/javascript" src="{% static 'plugins/tui-code-snippet.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'plugins/FileSaver.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'plugins/tui-color-picker.js' %}"></script>
+<script src="{% static 'plugins/tui-image-editor.js' %}"></script>
+<script type="text/javascript" src="{% static 'plugins/white-theme.js' %}"></script>
+<script type="text/javascript" src="{% static 'plugins/black-theme.js' %}"></script>
+<script>
+
+
+    /*键盘控制按钮事件*/
+    document.onkeydown = function (e) {
+        var theEvent = window.event || e;
+        var code = theEvent.keyCode || theEvent.which;
+        if (code == 39) {
+            $(".next").click();
+        }
+        else if (code == 37) {
+            $(".prev").click();
+        }
+        else if (code == 13) {
+            $(".save").click()
+        }
+    }
+
+
+    /* 获取图片路径*/
+    var currImg = {
+        id: null,
+        path: ''
+    }
+
+    var i = 0;
+    /*下一张*/
+    $(".next").click(function () {
+        $.ajax({
+            url: "/tagPageturn/",
+            type: "post",
+            dataType: "json",
+            data: {
+                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                "id": $(".obj_id").text(),
+                "btn": 'next'
+            },
+            success: function (con) {
+                console.log('res:', con);
+                if (con.code == 1) {
+                    currImg.id = con.data.id
+                    currImg.path = con.data.image_url
+                    var clist = con.data.clist
+                    console.log(clist)
+                    console.log(currImg.id, currImg.path)
+                    loadFromUrl(currImg.path, currImg.id, clist)
+
+                    {#imageEditor && imageEditor.loadImageFromURL("/media/" + con.data.image_url, 'name' + con.data.id)#}
+                    {#$("img").attr("src", "/media/" + res.data.image_url);#}
+                    $(".obj_id").text(con.data.id);
+                    $(".current_id").text("图片ID=/media/" + con.data.id)
+                    $(".prev").removeAttr("disabled");
+                }
+                else {
+                    $(".next").attr({disabled: "disabled"});
+                }
+            }
+        })
+    })
+
+    /*上一张*/
+    $(".prev").click(function () {
+        $.ajax({
+            url: "/tagPageturn/",
+            type: "post",
+            dataType: "json",
+            data: {
+                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                "id": $(".obj_id").text(),
+                "btn": "prev"
+            },
+            success: function (con) {
+                console.log('res:', con);
+                if (con.code == 1) {
+                    currImg.id = con.data.id
+                    currImg.path = con.data.image_url
+                    var clist = con.data.clist
+                    console.log(currImg.id, currImg.path)
+                    loadFromUrl(currImg.path, currImg.id, clist)
+                    {#$("img").attr("src", "/media/" + res.data.image_url);#}
+                    $(".obj_id").text(con.data.id);
+                    $(".current_id").text("图片ID=/media/" + con.data.id)
+                    $(".next").removeAttr("disabled");
+                }
+                else {
+                    $(".prev").attr({disabled: "disabled"});
+                }
+            }
+        })
+    })
+
+    /*加载图片以及获取以标注图片的标注框*/
+    var i = 0
+    var li = []
+
+    function loadFromUrl(url, id, clist) {
+        if (clist) {
+            for (i = 0; i < clist.length; i += 5) {
+                li = clist.slice(i, i + 5);
+                console.log(li);
+            }
+        }
+        {#if (li[4] === url && li[0] == id) {#}
+        console.log('li0:',li[0],'li1:', li[1],'li2:', li[2],'li3:', li[3],'li4:', li[4])
+        imageEditor && imageEditor.loadImageFromURL("/media/" + url, 'name' + id).then(res => {
+            imageEditor.addShape('rect', {
+                fill: '',
+                stroke: 'green',
+                strokeWidth: 10,
+                left: li[0],
+                top: li[1],
+                width: li[2],
+                height: li[3]
+            }).then(res => {
+                console.log('res:', res)
+            }).catch(err => {
+                console.log('err:', err)
+            })
+        }).catch(err => {
+            console.log('load img err', err)
+        })
+    }
+
+    /*window.onload = function () {
+        var oBox = document.getElementById("box");
+        //鼠标按下，获取初始点
+        oBox.onmousedown = function (ev) {
+            ev = window.event || ev;
+            //1.获取按下的点
+            var x1 = ev.clientX - oBox.offsetLeft;
+            var y1 = ev.clientY - oBox.offsetTop;
+            //2.创建div
+            var oDiv = document.createElement("div");
+            oBox.appendChild(oDiv);
+            oBox.onmousemove = function (ev) {
+                ev = window.event || ev;
+                var x2 = ev.clientX - oBox.offsetLeft;
+                var y2 = ev.clientY - oBox.offsetTop;
+                //3.设置div的样式
+                oDiv.style.left = (x2 > x1 ? x1 : x2) - 250.86 + "px";
+                oDiv.style.top = (y2 > y1 ? y1 : y2) + "px";
+                oDiv.style.width = Math.abs(x2 - x1) + "px";
+                oDiv.style.height = Math.abs(y2 - y1) + "px";
+            }
+            console.log(oDiv.style.left)
+            return false;  //解除在划动过程中鼠标样式改变的BUG
+        }
+        //在鼠标抬起后终止onmousemove事件
+        document.onmouseup = function () {
+            oBox.onmousemove = null;
+
+        }
+    }*/
+
+
+    /*自定义主题*/
+    var customTheme = {
+        'common.bi.image': '',
+        'common.bisize.width': '0px',
+        'common.bisize.height': '0px',
+        'common.backgroundImage': 'none',
+        'common.backgroundColor': '#fff',
+        'common.border': '0px',
+
+        // header
+        'header.backgroundImage': 'none',
+        'header.backgroundColor': 'transparent',
+        'header.border': '0px',
+
+
+        // load button
+        {#'loadButton.disabled': 'disabled',#}
+        'loadButton.backgroundColor': 'transparent',
+        'loadButton.border': '0px solid #ddd',
+        'loadButton.color': '#222',
+        'loadButton.fontFamily': 'NotoSans, sans-serif',
+        'loadButton.fontSize': '0px',
+
+        // download button
+        {#'downloadButton.backgroundColor': '#fdba3b',#}
+        'downloadButton.backgroundColor': 'transparent',
+        'downloadButton.border': '0px solid #fdba3b',
+        'downloadButton.color': '#fff',
+        'downloadButton.fontFamily': 'NotoSans, sans-serif',
+        'downloadButton.fontSize': '0px',
+        'downloadButton.style': 'display',
+
+        // main icons
+        'menu.normalIcon.path': '../dist/svg/icon-b.svg',
+        'menu.normalIcon.name': 'icon-b',
+        'menu.activeIcon.path': '../dist/svg/icon-a.svg',
+        'menu.activeIcon.name': 'icon-a',
+        'menu.iconSize.width': '24px',
+        'menu.iconSize.height': '24px',
+
+        // submenu primary color
+        'submenu.backgroundColor': '#fff',
+        {#'submenu.backgroundColor': '#E5E5E5',#}
+        'submenu.partition.color': '#fff',
+
+        // submenu icons
+        'submenu.normalIcon.path': '../dist/svg/icon-a.svg',
+        'submenu.normalIcon.name': 'icon-a',
+        'submenu.activeIcon.path': '../dist/svg/icon-c.svg',
+        'submenu.activeIcon.name': 'icon-c',
+        'submenu.iconSize.width': '32px',
+        'submenu.iconSize.height': '32px',
+
+        // submenu labels
+        'submenu.normalLabel.color': '#151515',
+        'submenu.normalLabel.fontWeight': 'lighter',
+        'submenu.activeLabel.color': '#151515',
+        'submenu.activeLabel.fontWeight': 'lighter',
+
+        // checkbox style
+        'checkbox.border': '1px solid #ccc',
+        'checkbox.backgroundColor': '#151515',
+        {#'checkbox.backgroundColor': '#fff',#}
+
+        // rango style
+        {#'range.pointer.color': '#fff',#}
+        'range.pointer.color': '#151515',
+        'range.bar.color': '#666',
+        'range.subbar.color': '#d1d1d1',
+        'range.value.color': '#fff',
+        {#'range.value.fontWeight': 'lighter',#}
+        'range.value.fontWeight': '#151515',
+        'range.value.fontSize': '11px',
+        'range.value.border': '1px solid #353535',
+        'range.value.backgroundColor': '#151515',
+        {#'range.title.color': '#fff',#}
+        'range.title.color': '#151515',
+        {#'range.title.fontWeight': 'lighter',#}
+        'range.title.fontWeight': '#151515',
+
+        // colorpicker style
+        'colorpicker.button.border': '1px solid #1e1e1e',
+        'colorpicker.title.color': '#fff'
+    }
+
+
+    /*ImageEditor画布功能 */
+    var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
+            includeUI: {
+                loadImage: {
+                    path: '/media/images/20180719_IMG_1229.JPG',
+                    name: 'Image'
+                },
+                theme: customTheme, // or whiteTheme
+                menu: ['shape'],
+                initMenu: 'shape',
+                menuBarPosition: 'bottom',
+            },
+            cssMaxWidth: 700,
+            cssMaxHeight: 500,
+
+        },
+    );
+
+    window.onresize = function () {
+        imageEditor.ui.resizeEditor();
+    };
+
+
+    /*保存图片*/
+    var ids = []
+    {#$('.save').on('click', function () {#}
+    $('.save').click(function () {
+        var psts = getPstByIds()
+        ids = []
+        console.log(psts)
+        var img = currImg.path
+        console.log(img)
+        $.ajax({
+            url: '/tagPage/',
+            type: 'post',
+            data: {
+                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                'res': JSON.stringify(psts),
+                'img': img
+            }
+        })
+
+    })
+
+    imageEditor.on('objectActivated', function (props) {
+
+        {#console.log(props)#}
+        {#console.log(props);#}
+        {#console.log(props.type);#}
+        {#console.log(props.id);#}
+        if (props.id) {
+            var id = props.id
+            if (!ids.find(v => (v === id))) {
+                ids.push(id)
+            }
+        }
+
+    });
+
+
+    function getPstByIds() {
+
+        var res = []
+        ids.forEach((el, index) => {
+            var pstObj = imageEditor.getObjectProperties(el, {
+                left: null,
+                top: null,
+                width: null,
+                height: null,
+                opacity: null
+            });
+            if (pstObj) {
+                res.push({
+                    x: pstObj.left - pstObj.width / 2,
+                    y: pstObj.top - pstObj.height / 2,
+                    w: pstObj.width,
+                    h: pstObj.height
+                })
+                /*console.log(res)*/
+            }
+        })
+        return res
+    }
+
+
+</script>
+</body>
+</html>
