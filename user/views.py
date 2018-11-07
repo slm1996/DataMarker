@@ -4,12 +4,8 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import json
 from django.contrib import auth
-from django import forms
-
-
-class UserForm(forms.Form):
-    username = forms.CharField(label='用户名', max_length=100)
-    password = forms.CharField(label='密码', widget=forms.PasswordInput())
+from .form import UserForm
+import time
 
 
 # def login_view(request):
@@ -20,6 +16,7 @@ class UserForm(forms.Form):
 #         print(user)
 #         if user is not None and user.is_active:
 #             auth.login(request, user)
+#
 #             return redirect('/tagPage/', {'user': user})
 #         else:
 #             error = '用户名或者密码错误!!!'
@@ -27,6 +24,13 @@ class UserForm(forms.Form):
 #     elif request.method == 'GET':
 #
 #         return render(request, 'login.html')
+
+def register_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = UserInfo.objects.create_user(username=username, password=password)
 
 
 def login_view(request):
@@ -64,38 +68,19 @@ def logout(request):
 
 
 def tag_page_turn(request):
-    # con = {"code": 0}
-    # if request.method == 'POST':
-    #
-    #     print(request.POST.get("id"))
-    #     next_id = int(request.POST.get("id"))
-    #     next_obj = Image.objects.filter(id=next_id).first()
-    #     if not next_obj:
-    #         return JsonResponse(con)
-    #     con["code"] = 1
-    #     con["data"] = {
-    #         "id": next_obj.id,
-    #         "image_url": str(next_obj.image_url)
-    #     }
-    #     return JsonResponse(con)
-    # return render(request, 'tagPage.html')
     con = {"code": 0}
     if request.method == 'POST':
         print(request.POST.get("id"))  # 第一次当前ID36
         print(request.POST.get('btn'))
         if request.POST.get('btn') == 'next':
             next_id = int(request.POST.get("id")) + 1
-            print("+++++")
             next_obj = Image.objects.filter(id=next_id).first()  # 拿到下一张图片的对象
         else:
             next_id = int(request.POST.get("id")) - 1
-            print("-----")
             next_obj = Image.objects.filter(id=next_id).first()  # 拿到下一张图片的对象
         if not next_obj:  # 判断对象存不存在
             return JsonResponse(con)
 
-        current_id = int(request.POST.get("id"))
-        print(current_id)
         coord = Coord.objects.all()
         clist = []
         for coo in coord:
@@ -113,8 +98,8 @@ def tag_page_turn(request):
             clist.append(cimg)
         con["code"] = 1
         con["data"] = {
-            "id": next_obj.id,  # 返回下一张图片的ID
-            "image_url": str(next_obj.image_url),  # 返回下一张图片的URL
+            "id": next_obj.id,  # 返回下一张或者上一张图片的ID
+            "image_url": str(next_obj.image_url),  # 返回下一张或者上一张图片的URL
             "clist": clist
         }
         return JsonResponse(con)

@@ -23,6 +23,7 @@ from django.conf.urls import url, include
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', views.login_view, name='login'),
+    url(r'^register/$', views.register_view, name='register'),
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^tagPage/$', views.tag_page, name='tagPage'),
     url(r'^tagPageturn/$', views.tag_page_turn, name='tagPageTurn'),
