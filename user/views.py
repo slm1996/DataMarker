@@ -1,70 +1,63 @@
-from django.shortcuts import render, HttpResponse, redirect, HttpResponseRedirect
-from .models import Image, Coord, UserInfo
+from django.shortcuts import render, redirect, HttpResponseRedirect
+from .models import Image, Coord, UserInfo, User
 from django.http import JsonResponse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import json
 from django.contrib import auth
-from .form import UserForm
-import time
-
-
-# def login_view(request):
-#     if request.method == 'POST':
-#         username = request.POST.get('username', '')
-#         password = request.POST.get('password', '')
-#         user = auth.authenticate(username=username, password=password)
-#         print(user)
-#         if user is not None and user.is_active:
-#             auth.login(request, user)
-#
-#             return redirect('/tagPage/', {'user': user})
-#         else:
-#             error = '用户名或者密码错误!!!'
-#             return render(request, 'login.html', {'error': error})
-#     elif request.method == 'GET':
-#
-#         return render(request, 'login.html')
-
-def register_view(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        user = UserInfo.objects.create_user(username=username, password=password)
+from django.contrib.auth.decorators import login_required
 
 
 def login_view(request):
+    '''
+    用户登录
+    :param request:
+    :return:
+    '''
     if request.method == 'POST':
-        # uf = UserForm(request.POST)
-        # if uf.is_valid():
-        #     username = uf.cleaned_data['username']
-        #     password = uf.cleaned_data['password']
-        #     user_obj = User.objects.filter(username=username, password=password).first()
-        #     if user_obj:
-        #         auth.login(request, user_obj)
-        #         return redirect('/tagPage/')
-        # user_obj = auth.authenticate(username=username, password=pwd)
-        # if user_obj is not None:
-        #     auth.login(request, user_obj)
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user_obj = UserInfo.objects.filter(username=username, password=password).first()
-        # user_obj = auth.authenticate(username=username, password=password)
-        if user_obj:
-            # auth.login(request, user_obj)
-            # auth.authenticate(user_obj)
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        user = auth.authenticate(username=username, password=password)
+        print(user)
+        if user is not None and user.is_active:
+            auth.login(request, user)
 
-            return redirect('/tagPage/', {'user': user_obj})
+            return redirect('/tagPage/', {'user': user})
         else:
             error = '用户名或者密码错误!!!'
             return render(request, 'login.html', {'error': error})
+    elif request.method == 'GET':
 
-    return render(request, 'login.html')
+        return render(request, 'login.html')
+
+
+def register_view(request):
+    '''
+    用户注册
+    :param request:
+    :return:
+    '''
+    if request.method == 'GET':
+
+        return render(request, 'register.html')
+    elif request.method == 'POST':
+        username = request.POST.get('username')
+        pwd = request.POST.get('password')
+        user = UserInfo.objects.create_user(username=username, password=pwd)
+        user.is_active = True
+        user.save()
+        request.session.clear()
+        request.session.flush()
+        return HttpResponseRedirect('/login/')
 
 
 def logout(request):
+    '''
+    登出
+    :param request:
+    :return:
+    '''
     auth.logout(request)
-    return render(request, 'login.html')
+    return redirect('/login/')
 
 
 def tag_page_turn(request):
@@ -81,21 +74,22 @@ def tag_page_turn(request):
         if not next_obj:  # 判断对象存不存在
             return JsonResponse(con)
 
+        # coord = Coord.objects.filter(img=next_obj.image_url)
         coord = Coord.objects.all()
+
         clist = []
         for coo in coord:
-            print(coo)
-            cx = coo.x
-            cy = coo.y
-            cw = coo.w
-            ch = coo.h
-            cimg = coo.img
-            print(cx, cy, cw, ch, cimg)
-            clist.append(cx)
-            clist.append(cy)
-            clist.append(cw)
-            clist.append(ch)
-            clist.append(cimg)
+            print('coo:', coo)
+            if coo.img == next_obj.image_url:
+                obj = {
+                    'x': coo.x,
+                    'y': coo.y,
+                    'w': coo.w,
+                    'h': coo.h,
+                    'i': coo.img
+                }
+                clist.append(obj)
+                print(clist)
         con["code"] = 1
         con["data"] = {
             "id": next_obj.id,  # 返回下一张或者上一张图片的ID
@@ -113,16 +107,11 @@ def tag_page(request):
         result = request.POST.get('res')
         img = request.POST.get('img')
         result = json.loads(result)
-        # print(result[0])
-        print(result[0]['x'])
-        print(result[0]['y'])
-        print(result[0]['w'])
-        print(result[0]['h'])
         coord = Coord()
-        coord.x = result[0]['x']
-        coord.y = result[0]['y']
-        coord.w = result[0]['w']
-        coord.h = result[0]['h']
+        coord.x = result[-1]['x']
+        coord.y = result[-1]['y']
+        coord.w = result[-1]['w']
+        coord.h = result[-1]['h']
         coord.img = img
         coord.save()
 

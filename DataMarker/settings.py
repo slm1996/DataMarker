@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'user'
 ]
 
-# AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = 'user.UserInfo'
 
 
 MIDDLEWARE = [
@@ -142,3 +142,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 DIST_ROOT = os.path.join(BASE_DIR, 'dist')
 DIST_URL = '/dist/'
+
+LOGIN_URL = '/login/'

@@ -193,36 +193,37 @@
     })
 
     /*加载图片以及获取已标注图片的标注框*/
-    var i = 0
-    var li = []
 
     function loadFromUrl(url, id, clist) {
-        if (clist && clist[4] == currImg.path) {
-            for (i = 0; i < clist.length; i += 5) {
-                li1 = clist.slice(i, i + 5);
-                li.push(li1)
-            }
-            console.log('路径是:', currImg.path)
-            console.log(li)
-        }
-        console.log('li0:', li[0], 'li1:', li[1], 'li2:', li[2], 'li3:', li[3], 'li4:', li[4])
 
         imageEditor && imageEditor.loadImageFromURL("/media/" + url, 'name' + id).then(res => {
-            imageEditor.addShape('rect', {
-                fill: '',
-                stroke: 'green',
-                strokeWidth: 10,
-                left: li[1][0],
-                top: li[1][1],
-                width: li[1][2],
-                height: li[1][3]
-            }).then(res => {
-                console.log('res:', res)
-            }).catch(err => {
-                console.log('err:', err)
-            })
+
+            if (clist) {
+                for (var i = 0; i < clist.length; i++) {
+                    var obj = clist[i]
+                    addRect(obj)
+                }
+                console.log('路径是:', currImg.path)
+            }
         }).catch(err => {
             console.log('load img err', err)
+        })
+    }
+
+    function addRect(obj) {
+        imageEditor.addShape('rect', {
+            fill: 'red',
+            stroke: 'green',
+            strokeWidth: 100,
+            left: obj.x,
+            top: obj.y,
+            width: obj.w,
+            height: obj.h,
+            isRegular: true
+        }).then(res => {
+            console.log('res:', res)
+        }).catch(err => {
+            console.log('err:', err)
         })
     }
 
@@ -369,7 +370,6 @@
 
     /*保存图片*/
     var ids = []
-    {#$('.save').on('click', function () {#}
     $('.save').click(function () {
         var psts = getPstByIds()
         ids = []

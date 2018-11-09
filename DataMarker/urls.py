@@ -27,7 +27,6 @@ urlpatterns = [
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^tagPage/$', views.tag_page, name='tagPage'),
     url(r'^tagPageturn/$', views.tag_page_turn, name='tagPageTurn'),
-    # url(r'^getframe/$', views.get_frame, name='get_frame'),
     url(r'^faceCluster/$', views.faceShow, name='face1'),
     url(r'^media/(?P<path>.*)$', serve, {"document_root": settings.MEDIA_ROOT}),
     url(r'^dist/(?P<path>.*)$', serve, {"document_root": settings.DIST_ROOT}),
