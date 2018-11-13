@@ -1,9 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser,User
+from django.contrib.auth.models import AbstractUser, User
 
 
 class UserInfo(AbstractUser):
-
     class Meta:
         verbose_name = '用户管理'
         verbose_name_plural = verbose_name
@@ -38,6 +37,7 @@ class Coord(models.Model):
     w = models.CharField(max_length=20, null=False, verbose_name='图片宽度')
     h = models.CharField(max_length=20, null=False, verbose_name='图片高度')
     img = models.CharField(max_length=64, verbose_name='所标图片')
+    attr = models.CharField(max_length=10, null=True, verbose_name='属性值')
 
     class Meta:
         verbose_name = '坐标管理'

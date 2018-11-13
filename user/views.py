@@ -21,7 +21,7 @@ def login_view(request):
         if user is not None and user.is_active:
             auth.login(request, user)
 
-            return redirect('/tagPage/', {'user': user})
+            return redirect('/taskProcess/', {'user': user})
         else:
             error = '用户名或者密码错误!!!'
             return render(request, 'login.html', {'error': error})
@@ -60,6 +60,13 @@ def logout(request):
     return redirect('/login/')
 
 
+@login_required
+def task_proce(request):
+    if request.method == 'GET':
+        return render(request, 'task_proce.html')
+
+
+@login_required
 def tag_page_turn(request):
     con = {"code": 0}
     if request.method == 'POST':
@@ -101,6 +108,7 @@ def tag_page_turn(request):
     return render(request, 'tagPage.html')
 
 
+@login_required
 def tag_page(request):
     if request.method == 'POST':
         print(request.POST.get('res'))
@@ -112,32 +120,15 @@ def tag_page(request):
         coord.y = result[-1]['y']
         coord.w = result[-1]['w']
         coord.h = result[-1]['h']
+        coord.attr = result[-1]['attr']
+        if coord.attr == '#00CD00':
+            coord.attr = 'normal'
+        else:
+            coord.attr = 'lying'
         coord.img = img
         coord.save()
 
     return render(request, 'tagPage.html')
-
-
-# def get_frame(request):
-#     coord = {}
-#     if request.method == 'POST':
-#         c = Coord()
-#         c1 = c.x
-#         c2 = c.y
-#         c3 = c.w
-#         c4 = c.h
-#         image_coord = c.img
-#         coord['data'] = {
-#             'x': c1,
-#             'y': c2,
-#             'w': c3,
-#             'h': c4,
-#             'img': image_coord
-#
-#         }
-#         return JsonResponse(coord)
-#
-#     return render(request, 'tagPage.html')
 
 
 def faceShow(request):

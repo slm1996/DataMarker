@@ -21,7 +21,7 @@
     <div class="panel-heading">
         <a class="s s1">Home</a>
         <a class="s s2">数据标注主页</a>
-        <a class="s s3">上一级</a>
+        <a class="s s3" href="{% url 'task_process' %}">上一级</a>
     </div>
     <div class="panel-body" style="padding: 0">
         <!--内容开始-->
@@ -119,7 +119,7 @@
             $(".prev").click();
         }
         else if (code == 13) {
-            $(".save").click()
+            $(".save").click();
         }
     }
 
@@ -162,6 +162,7 @@
         })
     })
 
+
     /*上一张*/
     $(".prev").click(function () {
         $.ajax({
@@ -192,6 +193,42 @@
         })
     })
 
+    /*属性栏选项*/
+    $('.normal').click(function () {
+
+
+        // step 1. get options to draw shape from toolbar
+        var shapeType = "rect";
+        var shapeOptions = {}
+        shapeOptions.stroke = '#00CD00';
+        shapeOptions.fill = '';
+
+        shapeOptions.strokeWidth = "10";
+
+        // step 2. set options to draw shape
+        imageEditor.setDrawingShape(shapeType, shapeOptions);
+
+        // step 3. start drawing shape mode
+        activateShapeMode();
+
+
+    })
+    $('.lying').click(function () {
+        // step 1. get options to draw shape from toolbar
+        var shapeType = "rect";
+        var shapeOptions = {}
+        shapeOptions.stroke = '#ff0000';
+        shapeOptions.fill = '';
+
+        shapeOptions.strokeWidth = "10";
+
+        // step 2. set options to draw shape
+        imageEditor.setDrawingShape(shapeType, shapeOptions);
+
+        // step 3. start drawing shape mode
+        activateShapeMode();
+    })
+
     /*加载图片以及获取已标注图片的标注框*/
 
     function loadFromUrl(url, id, clist) {
@@ -203,7 +240,6 @@
                     var obj = clist[i]
                     addRect(obj)
                 }
-                console.log('路径是:', currImg.path)
             }
         }).catch(err => {
             console.log('load img err', err)
@@ -211,20 +247,25 @@
     }
 
     function addRect(obj) {
-        imageEditor.addShape('rect', {
-            fill: 'red',
+
+        var rect = {
+            fill: '',
             stroke: 'green',
-            strokeWidth: 100,
-            left: obj.x,
-            top: obj.y,
+            strokeWidth: 10,
+            left: (+obj.x) + obj.w / 2,
+            top: (+obj.y) + obj.h / 2,
             width: obj.w,
             height: obj.h,
-            isRegular: true
-        }).then(res => {
+            isRegular: false
+        }
+        console.log('obj is', obj)
+        console.log('rect is', rect)
+        imageEditor.addShape('rect', rect).then(res => {
             console.log('res:', res)
         }).catch(err => {
             console.log('err:', err)
         })
+        activateShapeMode();
     }
 
     /*window.onload = function () {
@@ -354,7 +395,7 @@
                 },
                 theme: customTheme, // or whiteTheme
                 menu: ['shape'],
-                initMenu: 'shape',
+                initMenu: '',
                 menuBarPosition: 'bottom',
             },
             cssMaxWidth: 700,
@@ -367,6 +408,12 @@
         imageEditor.ui.resizeEditor();
     };
 
+    function activateShapeMode() {
+        if (imageEditor.getDrawingMode() !== 'SHAPE') {
+            imageEditor.stopDrawingMode();
+            imageEditor.startDrawingMode('SHAPE');
+        }
+    }
 
     /*保存图片*/
     var ids = []
@@ -382,7 +429,7 @@
             data: {
                 "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
                 'res': JSON.stringify(psts),
-                'img': img
+                'img': img,
             }
         })
 
@@ -413,16 +460,23 @@
                 top: null,
                 width: null,
                 height: null,
-                opacity: null
+                opacity: null,
+                stroke: null
             });
+            console.log(pstObj)
+            console.log(pstObj)
+            console.log(pstObj)
+            console.log(pstObj)
+            console.log(pstObj)
             if (pstObj) {
                 res.push({
                     x: pstObj.left - pstObj.width / 2,
                     y: pstObj.top - pstObj.height / 2,
                     w: pstObj.width,
-                    h: pstObj.height
+                    h: pstObj.height,
+                    attr: pstObj.stroke
                 })
-                /*console.log(res)*/
+
             }
         })
         return res
