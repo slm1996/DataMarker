@@ -196,7 +196,6 @@
     /*属性栏选项*/
     $('.normal').click(function () {
 
-
         // step 1. get options to draw shape from toolbar
         var shapeType = "rect";
         var shapeOptions = {}
@@ -234,11 +233,18 @@
     function loadFromUrl(url, id, clist) {
 
         imageEditor && imageEditor.loadImageFromURL("/media/" + url, 'name' + id).then(res => {
-
             if (clist) {
-                for (var i = 0; i < clist.length; i++) {
-                    var obj = clist[i]
-                    addRect(obj)
+                let i = 0
+                next()
+
+                function next() {
+                    if (clist[i]) {
+                        addRect(clist[i]).then(obj => {
+                            console.log('add ', obj)
+                            i++
+                            next()
+                        })
+                    }
                 }
             }
         }).catch(err => {
@@ -251,21 +257,18 @@
         var rect = {
             fill: '',
             stroke: 'green',
-            strokeWidth: 10,
+            strokeWidth: 11,
             left: (+obj.x) + obj.w / 2,
             top: (+obj.y) + obj.h / 2,
             width: obj.w,
             height: obj.h,
-            isRegular: false
+            isRegular: true
         }
         console.log('obj is', obj)
         console.log('rect is', rect)
-        imageEditor.addShape('rect', rect).then(res => {
-            console.log('res:', res)
-        }).catch(err => {
-            console.log('err:', err)
-        })
-        activateShapeMode();
+        return imageEditor.addShape('rect', rect)
+
+
     }
 
     /*window.onload = function () {

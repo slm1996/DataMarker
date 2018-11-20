@@ -41,7 +41,6 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = 'user.UserInfo'
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -76,6 +75,8 @@ WSGI_APPLICATION = 'DataMarker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
+
+# sqlite3数据库
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',

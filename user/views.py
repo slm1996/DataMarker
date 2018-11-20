@@ -62,16 +62,26 @@ def logout(request):
 
 @login_required
 def task_proce(request):
+    '''
+    跳转任务界面
+    :param request:
+    :return:
+    '''
     if request.method == 'GET':
         return render(request, 'task_proce.html')
 
 
 @login_required
 def tag_page_turn(request):
+    '''
+    上下张及获取已有框
+    :param request:
+    :return:
+    '''
     con = {"code": 0}
     if request.method == 'POST':
-        print(request.POST.get("id"))  # 第一次当前ID36
-        print(request.POST.get('btn'))
+        # print(request.POST.get("id"))  # 第一次当前ID36
+        # print(request.POST.get('btn'))
         if request.POST.get('btn') == 'next':
             next_id = int(request.POST.get("id")) + 1
             next_obj = Image.objects.filter(id=next_id).first()  # 拿到下一张图片的对象
@@ -86,7 +96,7 @@ def tag_page_turn(request):
 
         clist = []
         for coo in coord:
-            print('coo:', coo)
+            # print('coo:', coo)
             if coo.img == next_obj.image_url:
                 obj = {
                     'x': coo.x,
@@ -96,7 +106,7 @@ def tag_page_turn(request):
                     'i': coo.img
                 }
                 clist.append(obj)
-                print(clist)
+                # print(clist)
         con["code"] = 1
         con["data"] = {
             "id": next_obj.id,  # 返回下一张或者上一张图片的ID
@@ -110,11 +120,17 @@ def tag_page_turn(request):
 
 @login_required
 def tag_page(request):
+    '''
+    保存坐标及图片
+    :param request:
+    :return:
+    '''
     if request.method == 'POST':
-        print(request.POST.get('res'))
+        # print(request.POST.get('res'))
         result = request.POST.get('res')
         img = request.POST.get('img')
         result = json.loads(result)
+        print(result)
         coord = Coord()
         coord.x = result[-1]['x']
         coord.y = result[-1]['y']
