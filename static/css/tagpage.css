@@ -12,7 +12,7 @@
 
 /*}*/
 .s{
-    font-size: 20px;
+    font-size: 30%;
 }
 .s2{
     margin-left: 40%;
@@ -24,7 +24,3 @@
     margin-left: 80%;
 
 }
-/*.collapse navbar-collapse{*/
-/*!* 设置鼠标悬停时鼠标指针的形状为手型 *!*/
-    /*cursor:pointer;*/
-/*}*/

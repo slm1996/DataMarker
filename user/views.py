@@ -126,12 +126,18 @@ def tag_page(request):
     :return:
     '''
     if request.method == 'POST':
+
         # print(request.POST.get('res'))
         result = request.POST.get('res')
         img = request.POST.get('img')
+        cs = Coord.objects.all()
+        for c in cs:
+            if c.img == img:
+                c.delete()
         result = json.loads(result)
         print(result)
         coord = Coord()
+
         coord.x = result[-1]['x']
         coord.y = result[-1]['y']
         coord.w = result[-1]['w']
@@ -142,6 +148,7 @@ def tag_page(request):
         else:
             coord.attr = 'lying'
         coord.img = img
+
         coord.save()
 
     return render(request, 'tagPage.html')

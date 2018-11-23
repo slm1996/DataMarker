@@ -19,7 +19,7 @@
 <!--二级导航条开始-->
 <div class="panel panel-default">
     <div class="panel-heading">
-        <a class="s s1">Home</a>
+        <a class="s s1" href='#'>Home</a>
         <a class="s s2">数据标注主页</a>
         <a class="s s3" href="{% url 'task_process' %}">上一级</a>
     </div>
@@ -28,14 +28,14 @@
         {% csrf_token %}
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-2" style="padding: 0;width: 250px">
+                <div class="col-md-2" style="padding: 0;">
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <h5>属性栏</h5>
                         </div>
-                        <div class="panel-body" style="height: 400px">
+                        <div class="panel-body">
                             <p>
-                                <button class="btn btn-success normal">normal</button>
+                                <button type="reset" class="btn btn-success normal">normal</button>
                             </p>
                             <p>
                                 <button class="btn btn-danger lying">lying</button>
@@ -52,13 +52,14 @@
                         </div>
 
 
-                        <div class="panel-body" style="height: 800px;">
+                        <div class="panel-body" style="height:800px;">
 
                             <div id="tui-image-editor-container">
                             </div>
+                            <canvas id="cvs" style="position:absolute;bottom:150px;right: 150px "></canvas>
                             <br>
                             <div class="view">
-                                <button type="button" class="btn btn-default save">保存</button>
+                                <button type="button" style="display: none" class="btn btn-default save">保存</button>
                                 <button type="button" class="btn btn-primary prev">上一张</button>
                                 <button type="button" class="btn btn-success next">下一张</button>
                             </div>
@@ -66,23 +67,23 @@
                         </div>
                     </div>
                 </div>
-                {#                <div class="view">#}
-                {#                    <button type="button" class="btn btn-warning">收藏</button>#}
-                {#                    <button type="button" class="btn btn-default">撤销</button>#}
-                {#                    <button type="button" class="btn btn-primary prev">上一张</button>#}
-                {#                    <button type="button" class="btn btn-success next">下一张</button>#}
-                {#                </div>#}
+
+
             </div>
             <hr>
-            <div class="panel panel-default" style="padding: 0">
-                <div class="panel-heading">
-                    <h5><span>评论列表</span>
-                    </h5>
-                </div>
-                <div class="panel-body">
-                    <textarea></textarea>>
-                </div>
-            </div>
+            <form action="">
+                <textarea name="" id="" cols="30" rows="3"></textarea>
+                <input type="button" value="提交" class="btn btn-success">
+            </form>
+            {#            <div class="panel panel-default" style="padding: 0">#}
+            {#                <div class="panel-heading">#}
+            {#                    <h5><span>评论列表</span>#}
+            {#                    </h5>#}
+            {#                </div>#}
+            {#                <div class="panel-body">#}
+            {#                    <textarea></textarea>>#}
+            {#                </div>#}
+            {#            </div>#}
         </div>
 
         <!--内容结束-->
@@ -107,20 +108,65 @@
 <script type="text/javascript" src="{% static 'plugins/black-theme.js' %}"></script>
 <script>
 
+    /*var cvs = document.getElementById('cvs');
+    var ctx = cvs.getContext('2d');
+    cvs.width = 1150;
+    cvs.height = 650;
+    cvs.style.border = "0px solid #ccc";
+
+    function drawLine(arr, linecolor) {
+        ctx.beginPath();
+        ctx.strokeStyle = linecolor;
+        ctx.moveTo(arr[0][0], arr[0][1]);
+        //console.log(arr[0][0],arr[0][1])
+        for (var i = 1; i < arr.length; i++) {
+            ctx.lineTo(arr[i][0], arr[i][1]);
+        }
+        ctx.stroke();
+        ctx.closePath();
+    }*/
+
+    /*function drawTab(width) {
+        for (var i = 0; i < 180; i++) {
+            for (var j = 1; j < 12; j++) {
+                drawLine([[7 * i, 100 * j], [7 * i + 5, 100 * j]], "#efefef");
+                drawLine([[100 * j, 7 * i], [100 * j, 7 * i + 5]], "#efefef");
+            }
+        }
+    }*/
+
+    {#drawTab(1200);#}
+
+    // 鼠标跟随的事件
+    /*function mouseEvent() {
+        window.onmousemove = function (e) {
+            if (e.target.id === "cvs") {
+                ctx.clearRect(0, 0, cvs.width, cvs.height);
+                //drawTab(1200);
+                drawLine([[0, e.clientY], [1000, e.clientY]], "#cc3d48");
+                drawLine([[e.clientX, 0], [e.clientX, 1000]], "#cc3d48");
+                // console.log(e.target);
+                // console.log(e.clientX+':'+e.clientY);
+            }
+        }
+    }
+
+    mouseEvent();*/
+
 
     /*键盘控制按钮事件*/
     document.onkeydown = function (e) {
         var theEvent = window.event || e;
         var code = theEvent.keyCode || theEvent.which;
         if (code == 39) {
-            $(".next").click();
+            $(".next").click()&&$(".save").click();
         }
         else if (code == 37) {
             $(".prev").click();
         }
-        else if (code == 13) {
+        /*else if (code == 13) {
             $(".save").click();
-        }
+        }*/
     }
 
 
@@ -158,8 +204,9 @@
                 else {
                     $(".next").attr({disabled: "disabled"});
                 }
-            }
+            },
         })
+
     })
 
 
@@ -418,6 +465,7 @@
         }
     }
 
+
     /*保存图片*/
     var ids = []
     $('.save').click(function () {
@@ -437,7 +485,6 @@
         })
 
     })
-
     imageEditor.on('objectActivated', function (props) {
 
         {#console.log(props)#}
@@ -466,10 +513,6 @@
                 opacity: null,
                 stroke: null
             });
-            console.log(pstObj)
-            console.log(pstObj)
-            console.log(pstObj)
-            console.log(pstObj)
             console.log(pstObj)
             if (pstObj) {
                 res.push({
