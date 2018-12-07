@@ -20,7 +20,6 @@ from django.views.static import serve
 from django.conf import settings
 from django.conf.urls import url, include
 
-
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', views.login_view, name='login'),
@@ -29,7 +28,8 @@ urlpatterns = [
     url(r'^taskProcess/$', views.task_proce, name='task_process'),
     url(r'^tagPage/$', views.tag_page, name='tagPage'),
     url(r'^tagPageturn/$', views.tag_page_turn, name='tagPageTurn'),
-    url(r'^faceCluster/$', views.faceShow, name='face1'),
+    # url(r'^faceCluster/$', views.faceShow, name='face1'),
     url(r'^media/(?P<path>.*)$', serve, {"document_root": settings.MEDIA_ROOT}),
     url(r'^dist/(?P<path>.*)$', serve, {"document_root": settings.DIST_ROOT}),
+    url(r'^cluster/', include('cluster.urls'))
 ]

@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser, User
 
 
 class UserInfo(AbstractUser):
+
     class Meta:
         verbose_name = '用户管理'
         verbose_name_plural = verbose_name

@@ -9,88 +9,96 @@
     <link href="{% static 'css/tagpage.css' %}" rel="stylesheet">
     <link href="{% static 'css/tui-image-editor.min.css' %}" rel="stylesheet">
     <link type="text/css" href="{% static 'css/tui-color-picker.css' %}" rel="stylesheet">
-
+    <style>
+        #main {
+            width: 1500px;
+            height: 500px;
+            MARGIN-RIGHT: auto;
+            MARGIN-LEFT: auto;
+        }
+    </style>
 
 </head>
 <body>
 <!--导航条开始-->
-{% include "nav.html" %}
-<!--导航条结束-->
-<!--二级导航条开始-->
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <a class="s s1" href='#'>Home</a>
-        <a class="s s2">数据标注主页</a>
-        <a class="s s3" href="{% url 'task_process' %}">上一级</a>
-    </div>
-    <div class="panel-body" style="padding: 0">
-        <!--内容开始-->
-        {% csrf_token %}
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-2" style="padding: 0;">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <h5>属性栏</h5>
-                        </div>
-                        <div class="panel-body">
-                            <p>
-                                <button type="reset" class="btn btn-success normal">normal</button>
-                            </p>
-                            <p>
-                                <button class="btn btn-danger lying">lying</button>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-10" style="padding: 0;">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <h5><span class="current_id">图片ID=/media/36</span>
-                            </h5>
-                            <span class="obj_id" style="display: none">36</span>
-                        </div>
-
-
-                        <div class="panel-body" style="height:800px;">
-
-                            <div id="tui-image-editor-container">
-                            </div>
-                            <canvas id="cvs" style="position:absolute;bottom:150px;right: 150px "></canvas>
-                            <br>
-                            <div class="view">
-                                <button type="button" style="display: none" class="btn btn-default save">保存</button>
-                                <button type="button" class="btn btn-primary prev">上一张</button>
-                                <button type="button" class="btn btn-success next">下一张</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
-            <hr>
-            <form action="">
-                <textarea name="" id="" cols="30" rows="3"></textarea>
-                <input type="button" value="提交" class="btn btn-success">
-            </form>
-            {#            <div class="panel panel-default" style="padding: 0">#}
-            {#                <div class="panel-heading">#}
-            {#                    <h5><span>评论列表</span>#}
-            {#                    </h5>#}
-            {#                </div>#}
-            {#                <div class="panel-body">#}
-            {#                    <textarea></textarea>>#}
-            {#                </div>#}
-            {#            </div>#}
+<div id="main">
+    {% include "nav.html" %}
+    <!--导航条结束-->
+    <!--二级导航条开始-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <a class="s s1" href='#'>Home</a>
+            <a class="s s2">数据标注主页</a>
+            <a class="s s3" href="{% url 'task_process' %}">上一级</a>
         </div>
+        <div class="panel-body" style="padding: 0;">
+            <!--内容开始-->
+            {% csrf_token %}
+            <div class="container-fluid" style="width: 100%">
+                <div class="row">
+                    <div class="col-md-2" style="padding: 0;width: 20%">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h5>属性栏</h5>
+                            </div>
+                            <div class="panel-body">
+                                <p>
+                                    <button class="btn btn-success normal">normal</button>
+                                </p>
+                                <p>
+                                    <button class="btn btn-danger lying">lying</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-10" style="padding: 0;width: 80%">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h5><span class="current_id">图片ID=/media/36</span>
+                                </h5>
+                                <span class="obj_id" style="display: none">36</span>
+                            </div>
 
-        <!--内容结束-->
+
+                            <div class="panel-body" style="height:800px;">
+
+                                <div id="tui-image-editor-container">
+                                </div>
+                                <canvas id="cvs" style="position:absolute;bottom:150px;right: 150px "></canvas>
+                                <br>
+                                <div class="view">
+                                    <button type="button" style="display: none" class="btn btn-default save">保存</button>
+                                    <button type="button" class="btn btn-primary prev">上一张</button>
+                                    <button type="button" class="btn btn-success next">下一张</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <hr>
+                <form action="">
+                    <textarea name="" id="" cols="30" rows="3"></textarea>
+                    <input type="button" value="提交" class="btn btn-success">
+                </form>
+                {#            <div class="panel panel-default" style="padding: 0">#}
+                {#                <div class="panel-heading">#}
+                {#                    <h5><span>评论列表</span>#}
+                {#                    </h5>#}
+                {#                </div>#}
+                {#                <div class="panel-body">#}
+                {#                    <textarea></textarea>>#}
+                {#                </div>#}
+                {#            </div>#}
+            </div>
+
+            <!--内容结束-->
+        </div>
     </div>
+    <!--二级导航条结束-->
 </div>
-<!--二级导航条结束-->
-
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
@@ -149,9 +157,9 @@
                 // console.log(e.clientX+':'+e.clientY);
             }
         }
-    }
+    }*/
 
-    mouseEvent();*/
+    //mouseEvent();
 
 
     /*键盘控制按钮事件*/
@@ -159,7 +167,7 @@
         var theEvent = window.event || e;
         var code = theEvent.keyCode || theEvent.which;
         if (code == 39) {
-            $(".next").click()&&$(".save").click();
+            $(".next").click() && $(".save").click();
         }
         else if (code == 37) {
             $(".prev").click();
@@ -169,6 +177,9 @@
         }*/
     }
 
+    window.onload = function clickattr() {
+        $('.normal').click()
+    }
 
     /* 获取图片路径*/
     var currImg = {
@@ -204,6 +215,7 @@
                 else {
                     $(".next").attr({disabled: "disabled"});
                 }
+                $('.normal').click()
             },
         })
 
@@ -236,6 +248,7 @@
                 else {
                     $(".prev").attr({disabled: "disabled"});
                 }
+                $('.normal').click()
             }
         })
     })
@@ -300,11 +313,10 @@
     }
 
     function addRect(obj) {
-
         var rect = {
             fill: '',
             stroke: 'green',
-            strokeWidth: 11,
+            strokeWidth: 20,
             left: (+obj.x) + obj.w / 2,
             top: (+obj.y) + obj.h / 2,
             width: obj.w,

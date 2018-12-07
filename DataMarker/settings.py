@@ -36,8 +36,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user'
+    'user',
+    'rbac',
+    'cluster'
 ]
+PERMISSION_SESSION_KEY = 'permission'
+MENU_SESSION_KEY = 'menu'
+PERMISSION_WHITE_URL = ''
 
 AUTH_USER_MODEL = 'user.UserInfo'
 
@@ -49,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'rbac.middleware.rbac.RBACMiddleware',
 ]
 
 ROOT_URLCONF = 'DataMarker.urls'
@@ -92,7 +98,7 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'USER': 'root',
         'PASSWORD': '123456',
-        'PORT': '3306'
+        'PORT': '3306',
     }
 }
 
